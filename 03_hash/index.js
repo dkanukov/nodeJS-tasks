@@ -13,7 +13,7 @@ if (!fs.existsSync(arg)) {
   process.exit(100);
 } else if (!fs.existsSync(`${arg}.sha256`)) {
   console.error(`No file ${arg}.sha256`);
-  process.exit(1001);
+  process.exit(101);
 }
 
 const fileData = fs.readFileSync(process.argv[2], null);
@@ -23,8 +23,8 @@ const fileHash = hash256.update(fileData).digest("hex");
 
 if (comparator === fileHash) {
   console.log("Same hash");
-  process.exit(102);
+  process.exit(0);
 } else {
   console.log("Different hash");
-  process.exit(0);
+  process.exit(102);
 }

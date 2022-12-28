@@ -6,21 +6,25 @@ if (process.argv.length < 3) {
   process.exit(1);
 }
 
-fs.createReadStream("test-files/cat.jpg")
-  .pipe(crypto.createHash("sha256").setEncoding("hex"))
-  .on("finish", function () {
-    console.log(this.read()); //the hash
-  });
+const arg = process.argv[2];
 
-// fs.readFile('test-files/cat.jpg', 'utf8', (err, data) => {
-//   if (err) {
-//     console.error(err);
-//     process.exit(0);
-//   }
-//   // console.log(data);
-//   console.log(hash.update(data));
-// })
+if (!fs.existsSync(arg)) {
+  console.error(`No file ${arg}`);
+  process.exit(100);
+} else if (!fs.existsSync(`${arg}.sha256`)) {
+  console.error(`No file ${arg}.sha256`);
+  process.exit(1001);
+}
 
-console.log(crypto.createHash("sha256"));
+const fileData = fs.readFileSync(process.argv[2], null);
+const comparator = fs.readFileSync(`${process.argv[2]}.sha256`, "utf-8").trim();
+const hash256 = crypto.createHash("sha256");
+const fileHash = hash256.update(fileData).digest("hex");
 
-console.log("OK");
+if (comparator === fileHash) {
+  console.log("Same hash");
+  process.exit(102);
+} else {
+  console.log("Different hash");
+  process.exit(0);
+}
